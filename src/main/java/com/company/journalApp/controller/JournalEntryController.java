@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path="/journal")
+@RequestMapping(path="/journal")                // common for the whole rest controller
 public class JournalEntryController {
 
     Map<Long, JournalEntry> journalEntryList=new HashMap<>();
@@ -26,7 +26,7 @@ public class JournalEntryController {
     }
 
     @GetMapping("/id/{id}")
-    public JournalEntry getJournalById(@PathVariable Long id){
+    public JournalEntry getJournalById(@PathVariable Long id){              // path variable is what the ide looks for in the incoming url inside the curly brackets
         return journalEntryList.get(id);
     }
 
@@ -36,7 +36,7 @@ public class JournalEntryController {
     }
 
     @PutMapping("/id/{id}")
-    public String updateJournal(@PathVariable Long id, @RequestBody JournalEntry journalEntry){
+    public String updateJournal(@PathVariable Long id, @RequestBody JournalEntry journalEntry){             // inside put mapping, you give path variable that is to look the id in the path and the request body with the data that is to be updated from the incoming request
         journalEntryList.put(id, journalEntry);
         return "updated!!!!";
     }

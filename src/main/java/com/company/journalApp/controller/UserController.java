@@ -2,7 +2,6 @@ package com.company.journalApp.controller;
 
 import com.company.journalApp.entity.User;
 import com.company.journalApp.service.UserService;
-import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

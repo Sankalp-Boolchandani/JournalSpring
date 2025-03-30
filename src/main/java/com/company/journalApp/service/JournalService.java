@@ -28,6 +28,10 @@ public class JournalService {
             JournalEntry savedJournal = journalRepository.save(journalEntry);
             User user = userService.getUserByUsername(username);
             user.getJournalEntries().add(savedJournal);
+//            user.setUsername(null);
+//            line 31 is a perfect example of transaction annotation working.
+//            when uncommented, it sets the username as null and since it requires a not null data, it would refuse creation/updation
+//            causing the user to not being saved. And since the journal is already saved, it too would roll back!!!
             userService.saveUser(user);
         } catch (Exception e) {
             throw new RuntimeException(e);

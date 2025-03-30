@@ -55,14 +55,18 @@ public class JournalController {
         }
     }
 
-    @DeleteMapping("id/{id}")
-    public ResponseEntity<String> deleteJournal(@PathVariable ObjectId id){
-        journalService.deleteJournal(id);
+    @DeleteMapping("{username}/id/{id}")
+    public ResponseEntity<String> deleteJournal(@PathVariable ObjectId id, @PathVariable String username){
+        journalService.deleteJournal(id, username);
         return new ResponseEntity<>("Deleted!!", HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("id/{id}")
-    public ResponseEntity<JournalEntry> updateJournal(@PathVariable ObjectId id, @RequestBody JournalEntry journalEntry){
+    @PutMapping("{username}/id/{id}")
+    public ResponseEntity<JournalEntry> updateJournal(
+            @PathVariable String username,
+            @PathVariable ObjectId id,
+            @RequestBody JournalEntry journalEntry
+    ){
         JournalEntry resposeEntry=journalService.updateJournalDetails(id, journalEntry);
         if (resposeEntry!=null){
             return new ResponseEntity<>(resposeEntry, HttpStatus.CREATED);

@@ -1,11 +1,13 @@
 package com.company.journalApp.service;
 
 import com.company.journalApp.entity.JournalEntry;
+import com.company.journalApp.entity.User;
 import com.company.journalApp.repository.JournalRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,8 +17,15 @@ public class JournalService {
     @Autowired
     private JournalRepository journalRepository;
 
-    public void saveEntry(JournalEntry journalEntry) {
-        journalRepository.save(journalEntry);
+    @Autowired
+    private UserService userService;
+
+    public void saveEntry(JournalEntry journalEntry, String username) {
+        journalEntry.setDate(LocalDateTime.now());
+        JournalEntry savedJournal = journalRepository.save(journalEntry);
+        User user = userService.getUserByUsername(username);
+        user.getJournalEntries().add(savedJournal);
+        userService.saveUser(user);
     }
 
     public List<JournalEntry> getAll() {

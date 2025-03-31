@@ -6,6 +6,7 @@ import com.company.journalApp.repository.JournalRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,12 +21,21 @@ public class JournalService {
     @Autowired
     private UserService userService;
 
+    // line 34 is a perfect example of transaction annotation working.
+    // when uncommented, it sets the username as null and since it requires a not null data, it would refuse creation/updation
+    // causing the user to not being saved. And since the journal is already saved, it too would roll back!!!
+    @Transactional
     public void saveEntry(JournalEntry journalEntry, String username) {
-        journalEntry.setDate(LocalDateTime.now());
-        JournalEntry savedJournal = journalRepository.save(journalEntry);
-        User user = userService.getUserByUsername(username);
-        user.getJournalEntries().add(savedJournal);
-        userService.saveUser(user);
+        try {
+            journalEntry.setDate(LocalDateTime.now());
+            JournalEntry savedJournal = journalRepository.save(journalEntry);
+            User user = userService.getUserByUsername(username);
+            user.getJournalEntries().add(savedJournal);
+            // user.setUsername(null);
+            userService.saveUser(user);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<JournalEntry> getAll() {

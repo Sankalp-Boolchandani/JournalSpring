@@ -25,12 +25,12 @@ public class JournalController {
     private UserService userService;
 
     @PostMapping("{username}")
-    public ResponseEntity<JournalEntry> createEntry(@RequestBody JournalEntry journalEntry, @PathVariable String username){
+    public ResponseEntity<?> createEntry(@RequestBody JournalEntry journalEntry, @PathVariable String username){
         try {
             journalService.saveEntry(journalEntry, username);
             return new ResponseEntity<>(journalEntry, HttpStatus.CREATED);
         } catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 

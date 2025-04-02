@@ -33,7 +33,7 @@ public class JournalService {
             user.getJournalEntries().add(savedJournal);
             // user.setUsername(null);
             // userService.saveUser(user);
-            userService.saveUserOnJournalCreation(user);
+            userService.saveUserOnJournalOperation(user);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -48,22 +48,38 @@ public class JournalService {
         return user.getJournalEntries().stream().filter(x->x.getId().equals(id)).findFirst();
     }
 
-    public void deleteJournal(ObjectId id, String username) {
-        User user = userService.getUserByUsername(username);
-        user.getJournalEntries().removeIf(x->x.getId().equals(id));
-        userService.saveUser(user);
-        journalRepository.deleteById(id);
+    @Transactional
+    public boolean deleteJournal(ObjectId id, String username) {
+        boolean removed = false;
+        try {
+            User user = userService.getUserByUsername(username);
+            removed = user.getJournalEntries().removeIf(x -> x.getId().equals(id));
+            if (removed){
+                userService.saveUserOnJournalOperation(user);
+                journalRepository.deleteById(id);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return removed;
     }
 
-    public JournalEntry updateJournalDetails(ObjectId id, JournalEntry journalEntryNew) {
-        JournalEntry journalEntryOld=journalRepository.findById(id).orElse(null);
-        if (journalEntryNew.getName()!=null || !journalEntryNew.getName().isEmpty()){
-            journalEntryOld.setName(journalEntryNew.getName());
+    public boolean updateJournalDetails(ObjectId id, JournalEntry journalEntryNew, String username) {
+        User user = userService.getUserByUsername(username);
+        if (user!=null){
+            Optional<JournalEntry> journalEntryOld = user.getJournalEntries().stream().filter(x -> x.getId().equals(id)).findAny();
+            if (journalEntryOld.isPresent()){
+                JournalEntry journalEntry = journalEntryOld.get();
+                if (journalEntryNew.getName()!=null || !journalEntryNew.getName().isEmpty()){
+                    journalEntry.setName(journalEntryNew.getName());
+                }
+                if (journalEntryNew.getContent()!=null || !journalEntryNew.getContent().isEmpty()){
+                    journalEntry.setContent(journalEntryNew.getContent());
+                }
+                journalRepository.save(journalEntry);
+                return true;
+            }
         }
-        if (journalEntryNew.getContent()!=null || !journalEntryNew.getContent().isEmpty()){
-            journalEntryOld.setContent(journalEntryNew.getContent());
-        }
-        journalRepository.save(journalEntryOld);
-        return journalEntryOld;
+        return false;
     }
 }

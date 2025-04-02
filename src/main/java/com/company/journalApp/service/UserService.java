@@ -30,7 +30,7 @@ public class UserService {
     // we are not using the earlier described save method as that method contains hashing the password
     // and while adding the journal, it is hashing an already hashed password which is creating an issue,
     // thats why this new method without changing password or other details.
-    public void saveUserOnJournalCreation(User user){
+    public void saveUserOnJournalOperation(User user){
         userRepository.save(user);
     }
 

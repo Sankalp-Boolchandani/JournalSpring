@@ -67,21 +67,28 @@ public class JournalController {
         }
     }
 
-    @DeleteMapping("{username}/id/{id}")
-    public ResponseEntity<String> deleteJournal(@PathVariable ObjectId id, @PathVariable String username){
-        journalService.deleteJournal(id, username);
-        return new ResponseEntity<>("Deleted!!", HttpStatus.NO_CONTENT);
+    @DeleteMapping("id/{id}")
+    public ResponseEntity<String> deleteJournal(@PathVariable ObjectId id){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username=authentication.getName();
+        boolean deleteJournal = journalService.deleteJournal(id, username);
+        if (deleteJournal){
+            return new ResponseEntity<>("Deleted!!", HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>("journal with id "+id+" not found!!", HttpStatus.NOT_FOUND);
+        }
     }
 
-    @PutMapping("{username}/id/{id}")
-    public ResponseEntity<JournalEntry> updateJournal(
-            @PathVariable String username,
+    @PutMapping("id/{id}")
+    public ResponseEntity<?> updateJournal(
             @PathVariable ObjectId id,
             @RequestBody JournalEntry journalEntry
     ){
-        JournalEntry resposeEntry=journalService.updateJournalDetails(id, journalEntry);
-        if (resposeEntry!=null){
-            return new ResponseEntity<>(resposeEntry, HttpStatus.CREATED);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username=authentication.getName();
+        boolean resposeEntry=journalService.updateJournalDetails(id, journalEntry, username);
+        if (resposeEntry){
+            return new ResponseEntity<>(true, HttpStatus.CREATED);
         } else {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

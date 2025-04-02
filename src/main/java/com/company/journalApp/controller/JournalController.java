@@ -8,6 +8,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -24,9 +26,11 @@ public class JournalController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("{username}")
-    public ResponseEntity<?> createEntry(@RequestBody JournalEntry journalEntry, @PathVariable String username){
+    @PostMapping
+    public ResponseEntity<?> createEntry(@RequestBody JournalEntry journalEntry){
         try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username=authentication.getName();
             journalService.saveEntry(journalEntry, username);
             return new ResponseEntity<>(journalEntry, HttpStatus.CREATED);
         } catch (Exception e){
@@ -34,20 +38,28 @@ public class JournalController {
         }
     }
 
-    @GetMapping("{username}")
-    public ResponseEntity<?> getAllEntriesOfUser(@PathVariable String username){
+    @GetMapping
+    public ResponseEntity<?> getAllEntriesOfUser(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
         User user = userService.getUserByUsername(username);
-        List<JournalEntry> list=user.getJournalEntries();
-        if (list!=null){
-            return new ResponseEntity<>(list, HttpStatus.OK);
+        if (user!=null){
+            List<JournalEntry> list=user.getJournalEntries();
+            if (!list.isEmpty()){
+                return new ResponseEntity<>(list, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
         } else {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("user not found!", HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping("id/{id}")
     public ResponseEntity<JournalEntry> getJournalById(@PathVariable ObjectId id){
-        Optional<JournalEntry> journalEntry=journalService.getById(id);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username=authentication.getName();
+        Optional<JournalEntry> journalEntry=journalService.getById(username, id);
         if (journalEntry.isPresent()){
             return new ResponseEntity<>(journalEntry.get(), HttpStatus.OK);
         }else {

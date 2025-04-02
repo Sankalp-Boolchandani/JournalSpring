@@ -32,7 +32,8 @@ public class JournalService {
             User user = userService.getUserByUsername(username);
             user.getJournalEntries().add(savedJournal);
             // user.setUsername(null);
-            userService.saveUser(user);
+            // userService.saveUser(user);
+            userService.saveUserOnJournalCreation(user);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -42,8 +43,9 @@ public class JournalService {
         return journalRepository.findAll();
     }
 
-    public Optional<JournalEntry> getById(ObjectId id) {
-        return journalRepository.findById(id);
+    public Optional<JournalEntry> getById(String username, ObjectId id) {
+        User user = userService.getUserByUsername(username);
+        return user.getJournalEntries().stream().filter(x->x.getId().equals(id)).findFirst();
     }
 
     public void deleteJournal(ObjectId id, String username) {

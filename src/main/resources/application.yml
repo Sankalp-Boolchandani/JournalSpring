@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: JournalApp
+  main:
+    allow-circular-references: true
+  data:
+    mongodb:
+#      host: localhost
+#      port: 27017
+      uri: mongodb+srv://boolchandanisankalp:SzHAX9J49qUWQwxt@cluster0.62svvs1.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+      database: journaldb
+      auto-index-creation: true
+#      username:
+#      password:
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb: DEBUG

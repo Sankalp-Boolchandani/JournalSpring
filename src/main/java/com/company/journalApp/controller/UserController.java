@@ -16,13 +16,15 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
-    public List<User> getAllUser(){
-        return userService.getAllUsers();
-    }
+//    @GetMapping
+//    public List<User> getAllUser(){
+//        return userService.getAllUsers();
+//    }
 
-    @GetMapping("{username}")
-    public User getUserByUsername(@PathVariable String username){
+    @GetMapping
+    public User getUserByUsername(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username=authentication.getName();
         return userService.getUserByUsername(username);
     }
 

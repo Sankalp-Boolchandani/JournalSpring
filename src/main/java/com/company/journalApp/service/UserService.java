@@ -50,4 +50,10 @@ public class UserService {
     public void deleteUser(String username) {
         userRepository.deleteByUsername(username);
     }
+
+    public void createAdmin(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setRoles(List.of("USER", "ADMIN"));
+        userRepository.save(user);
+    }
 }

@@ -29,6 +29,10 @@ public class UserService {
             user.setRoles(List.of("USER"));
             userRepository.save(user);
         } catch (Exception e) {
+//            log.info("xdddddddddddd");            // would log default
+//            log.warn("xdddddddddddd");            // would log default
+//            log.debug("xdddddddddddd");           // would not log default
+//            log.trace("xdddddddddddd");           // would not log by default
             log.error("Exception occurred for {}: {}", user.getUsername(), e.getMessage());
             throw new RuntimeException(e);
         }

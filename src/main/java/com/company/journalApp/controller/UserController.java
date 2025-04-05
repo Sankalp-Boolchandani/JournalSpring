@@ -2,7 +2,10 @@ package com.company.journalApp.controller;
 
 import com.company.journalApp.entity.User;
 import com.company.journalApp.service.UserService;
+import com.company.journalApp.service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private WeatherService weatherService;
 
 //    @GetMapping
 //    public List<User> getAllUser(){
@@ -44,6 +50,12 @@ public class UserController {
         userService.deleteUser(authentication.getName());
     }
 
+    @GetMapping("/greet/{city}")
+    public ResponseEntity<String> greetUser(@PathVariable String city){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String res=weatherService.getWeather(city, authentication.getName());
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 }
 
 

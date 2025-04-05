@@ -28,8 +28,8 @@ public class SecurityConfig {
         return http.authorizeHttpRequests(request -> request
                         .requestMatchers("/public/**").permitAll()                         // 1. changed the users to permit all because we dont need authentication to create a user.
                                                                                                     // 1. Authentication is only needed to create a journal
-                        .requestMatchers("/journal/**", "/user/**").authenticated()        // 2. moving user endpoint to authentication required!!
-                        .requestMatchers("/admin/**").hasRole("ADMIN")                    // 3. allowing admin endpoint only to people who have an ADMIN role
+//                        .requestMatchers("/journal/**", "/user/**").authenticated()        // 2. moving user endpoint to authentication required!!
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")                    // 3. allowing admin endpoint only to people who have an ADMIN role
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)

@@ -7,8 +7,11 @@
   * by default, only warn, info and error logs are added in logback. We add DEBUG and TRACE manually using logback.xml or application.properties/yml
 * We can use different environments like dev and prod using spring. to do so we create different files namely application-dev.yml/properties and application-prod.yml/properties consisting of dev or prod properties respectively and we can set the env in the main application.properties/yml file   
 
-
 # Resume Stuff:
 * SonarQube sonarCloud and sonarLint
 * mongo - DB and atlas cloud
 * logging
+
+# Todo:
+* implement sonarCloud and sonarLint again in the system
+* check how to get coverage files for when adding tests

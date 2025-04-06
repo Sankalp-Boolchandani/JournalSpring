@@ -14,13 +14,16 @@ public class WeatherService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private AppConfigDataService dataService;
+
     @Value("${weather_api_key}")
     private String API_KEY;
-    private static final String baseUrl="http://api.weatherstack.com/current?access_key=API_KEY&query=CITY";
+//    private static final String baseUrl="http://api.weatherstack.com/current?access_key=API_KEY&query=CITY";
 
     public String getWeather(String city, String name){
-        String replacedUrl = baseUrl.replace("API_KEY", API_KEY).replace("CITY", city);
-
+        String baseUrl = dataService.getAppConfig().get("weather_url");
+        String replacedUrl = baseUrl.replace("<apiKey>", API_KEY).replace("<city>", city);
         ResponseEntity<WeatherResponse> weather = restTemplate.exchange(replacedUrl, HttpMethod.GET, null, WeatherResponse.class);
 //      this is for the GET call. for post call, we pass the HttpMethod.POST in the same exchange method and pass the request entity instead of null.
         WeatherResponse weatherResponse=weather.getBody();

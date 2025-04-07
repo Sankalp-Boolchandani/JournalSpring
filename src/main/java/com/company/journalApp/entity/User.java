@@ -27,6 +27,8 @@ public class User {
     @DBRef                  // DBRef is used to reference the id of a specific object in mongoDB. Only Id, not complete document
     private List<JournalEntry> journalEntries = new ArrayList<>();
     private List<String> roles;
+    private String email;
+    private boolean sentimentAnalysis;
 
 
 }
